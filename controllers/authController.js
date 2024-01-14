@@ -2,6 +2,7 @@ import userModel from '../models/userModel.js';
 import { comparePassword, hashPassword } from '../utils/authHelper.js';
 import asyncHandler from 'express-async-handler';
 import JWT from 'jsonwebtoken';
+import { requireSignIn } from '../middlewares/authMiddleware.js';
 export const registerController = asyncHandler(async (req, res) => {
   try {
     console.log(req.body);
@@ -94,3 +95,7 @@ export const loginController = async (req, res) => {
     });
   }
 };
+export const testController = asyncHandler(async (req, res) => {
+  console.log('protected ');
+  return res.send('Protected Routes');
+});
