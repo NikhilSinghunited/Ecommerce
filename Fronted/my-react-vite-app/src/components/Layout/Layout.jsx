@@ -2,14 +2,13 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
-const Layout = (porps) => {
+const Layout = (props) => {
   return (
-    <div>
+    <>
       <Header />
-      <main>{porps.children}</main>
-
+      <main style={{ minHeight: '100vh' }}>{props.children}</main>
       <Footer />
-    </div>
+    </>
   );
 };
 
