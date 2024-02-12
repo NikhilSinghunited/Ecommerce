@@ -8,7 +8,7 @@ export const registerController = asyncHandler(async (req, res) => {
     console.log(req.body);
     const { name, email, password, phone, role } = req.body;
     if (!name || !email || !password || !phone || !role) {
-      return res.send({ error: 'Enter every Field Details' });
+      return res.send({ message: 'Enter every Field Details' });
     }
 
     const user = await userModel.findOne({ email: email });
