@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import Layout from '../../components/Layout/Layout';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        '`http://localhost:8080/api/v1/auth/login`',
+        `http://localhost:8080/api/v1/auth/login`,
         {
           email,
           password,
         }
       );
-      // Handle successful login response here
-      console.log(response.data);
+
+      if (response && response.data.message) {
+        navigate('/');
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       // Handle login error here
       console.error('Login error:', error);
