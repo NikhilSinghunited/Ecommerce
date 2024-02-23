@@ -2,12 +2,13 @@ import userModel from '../models/userModel.js';
 import { comparePassword, hashPassword } from '../utils/authHelper.js';
 import asyncHandler from 'express-async-handler';
 import JWT from 'jsonwebtoken';
-import { requireSignIn } from '../middlewares/authMiddleware.js';
+import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
+
 export const registerController = asyncHandler(async (req, res) => {
   try {
     console.log(req.body);
-    const { name, email, password, phone, role } = req.body;
-    if (!name || !email || !password || !phone || !role) {
+    const { name, email, password, answer, phone, role } = req.body;
+    if (!name || !email || !password || !phone || !role || !answer) {
       return res.send({ message: 'Enter every Field Details' });
     }
 
@@ -26,6 +27,7 @@ export const registerController = asyncHandler(async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
+      answer: answer,
       phone: phone,
       role: role,
     });
@@ -95,6 +97,59 @@ export const loginController = async (req, res) => {
     });
   }
 };
+
+export const forgotPasswordController = asyncHandler(async (req, res) => {
+  try {
+    console.log('hi');
+    const { email, answer, newPassword } = req.body;
+    console.log(req.body);
+
+    if (!email) {
+      return res.status(404).send({
+        success: false,
+        message: 'Enter email',
+      });
+    }
+
+    if (!answer) {
+      return res.status(404).send({
+        success: false,
+        message: 'Enter question',
+      });
+    }
+
+    if (!newPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Enter new password',
+      });
+    }
+
+    const user = await userModel.findOne({ email, answer });
+    console.log(user);
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: 'User not found in the database',
+      });
+    }
+
+    const hashed = await hashPassword(newPassword);
+    console.log(hashed);
+    await userModel.findByIdAndUpdate(user._id, { password: hashed });
+
+    res.status(200).send({
+      success: true,
+      message: 'Password Reset Successfully',
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    });
+  }
+});
 export const testController = asyncHandler(async (req, res) => {
   console.log('protected ');
   return res.send('Protected Routes');

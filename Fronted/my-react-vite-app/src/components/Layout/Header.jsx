@@ -1,9 +1,20 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
-
+import { useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 const Header = () => {
-  const [auth, setAuth] = useAuth(); // Corrected the name of setAuth
+  const [auth, setAuth] = useAuth(); // Correct destructuring
+  const navigate = useNavigate();
+
+  const handlelogout = () => {
+    setAuth({
+      ...auth,
+      user: null,
+      token: null,
+    });
+    localStorage.removeItem('auth');
+  };
 
   return (
     <nav className='bg-gray-800 py-4'>
@@ -47,6 +58,7 @@ const Header = () => {
             <>
               <li>
                 <NavLink
+                  onClick={handlelogout}
                   to='/logout' // Change the link to logout route
                   activeClassName='font-bold'
                   className='hover:underline'
@@ -56,6 +68,40 @@ const Header = () => {
               </li>
             </>
           )}
+          <li>
+            <div className='relative'>
+              <button
+                className='hover:underline'
+                onClick={() => {
+                  if (auth?.user?.role === 1) {
+                    navigate('/AdminDashboard');
+                  } else {
+                    navigate('/AdminDashboard');
+                  }
+                }}
+              >
+                Dashboard
+              </button>
+              <select
+                className='absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10'
+                onChange={(e) => {
+                  setAuth({
+                    ...auth,
+                    user: {
+                      ...auth.user,
+                      role: parseInt(e.target.value),
+                    },
+                  });
+                }}
+                value={auth?.user?.role}
+                name='role'
+                id='role'
+              >
+                <option value={1}>Admin</option>
+                <option value={2}>User</option>
+              </select>
+            </div>
+          </li>
           <li>
             <NavLink
               to='/category'
@@ -76,6 +122,7 @@ const Header = () => {
           </li>
         </ul>
       </div>
+      <Outlet />
     </nav>
   );
 };

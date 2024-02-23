@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import Layout from '../../components/Layout/Layout';
+import Layout from '../components/Layout/Layout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/auth';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [auth, setAuth] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  console.log('email:', email);
+  console.log('password:', password);
 
   const handleLogin = async () => {
     try {
@@ -21,21 +25,26 @@ const Login = () => {
         }
       );
 
+      console.log('response:', response);
+
       if (response && response.data.message) {
-        console.log(response);
+        console.log('response.data:', response.data);
+
         setAuth({
           ...auth,
           user: response.data.user,
           token: response.data.token,
         });
-        console.log(setAuth);
+
+        console.log('auth:', auth);
+
         localStorage.setItem('auth', JSON.stringify(response.data));
-        navigate('/');
+
+        navigate(location.state || '/');
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // Handle login error here
       console.error('Login error:', error);
     }
   };
@@ -83,6 +92,17 @@ const Login = () => {
               onClick={handleLogin}
             >
               Sign In
+            </button>
+          </div>
+          <div className='flex items-center justify-between'>
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              type='button'
+              onClick={() => {
+                navigate('/forgot-password');
+              }}
+            >
+              Forgot Password?
             </button>
           </div>
         </form>

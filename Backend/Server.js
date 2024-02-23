@@ -1,25 +1,19 @@
-// server.js
 import express from 'express';
+import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import connectDB from './config/db.js';
-import authRoutes from './routes/authRoute.js';
 import cors from 'cors';
-dotenv.config();
-connectDB();
+import authRoute from './routes/authRoute.js';
 
+dotenv.config();
+connectDB(process.env.MONGODB_URI);
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(cors());
-app.use('/api/v1/auth', authRoutes);
-app.get('/', (req, res) => {
-  res.send({
-    message: 'Welcome to e-commerce app',
-  });
-});
+app.use('/api/v1/auth', authRoute);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on ${process.env.DEV_MODE} ${PORT}`);
+  console.log(`Server is running on ${PORT}`);
 });

@@ -25,8 +25,10 @@ const userSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
-    question: {
+
+    answer: {
       type: String,
+      required: true,
     },
   },
   { timestamps: true }

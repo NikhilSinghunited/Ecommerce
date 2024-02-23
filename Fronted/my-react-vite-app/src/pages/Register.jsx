@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Layout from './../../components/Layout/Layout';
+import Layout from '../components/Layout/Layout';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,11 +11,12 @@ const Register = () => {
     password: '',
     phone: '',
     role: '',
+    answer: '',
   });
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -27,7 +28,6 @@ const Register = () => {
     try {
       const response = await axios.post(
         `http://localhost:8080/api/v1/auth/register`,
-        // { name, email, password, phone, role }
         { ...formdata }
       );
       console.log(response);
@@ -41,7 +41,6 @@ const Register = () => {
       console.log(error);
       toast.error('Something went wrong');
     }
-    // toast.success('Registered Successfully');
   };
 
   return (
@@ -145,7 +144,7 @@ const Register = () => {
                   htmlFor='role'
                   className='block text-sm font-medium text-gray-700'
                 >
-                  role
+                  Role
                 </label>
                 <div className='mt-1'>
                   <input
@@ -154,7 +153,28 @@ const Register = () => {
                     type='text'
                     autoComplete='address-line1'
                     required
-                    value={formdata.address}
+                    value={formdata.role}
+                    onChange={handleChange}
+                    className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor='answer'
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Answer
+                </label>
+                <div className='mt-1'>
+                  <input
+                    id='answer'
+                    name='answer'
+                    type='text'
+                    autoComplete='address-line1'
+                    required
+                    value={formdata.answer}
                     onChange={handleChange}
                     className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                   />
